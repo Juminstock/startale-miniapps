@@ -14,9 +14,10 @@
       "subtitle": "Startale Mini App Example",
       "description": "Example code to learn how to create Mini Apps!",
       "primaryCategory": "productivity",
-      "tags": ["onchain", "tasks", "rewards"],
-      "screenshotUrls": [
-        "https://startale-miniapps.vercel.app/screenshot.png"
+      "tags": [
+        "onchain",
+        "tasks",
+        "rewards"
       ],
       "requiredChains": ["eip155:1946"]
     }
