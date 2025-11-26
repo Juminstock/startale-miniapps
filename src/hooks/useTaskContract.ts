@@ -1,8 +1,7 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseAbi } from 'viem';
 
-// Replace with your contract address after deployment
-const CONTRACT_ADDRESS = '0x0070174febef8551315fc8b9d3516494af5eccbc' as `0x${string}`;
+const CONTRACT_ADDRESS = '0x48Ade00939B7F3594d5218679854c285533007DB' as `0x${string}`;
 
 const taskTrackerAbi = parseAbi([
   'function createTask(string calldata description) external',

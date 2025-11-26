@@ -1,27 +1,26 @@
 import { http, createConfig } from "wagmi";
 import { injected } from "wagmi/connectors";
 
-// Soneium Minato Testnet
-const soneiumMinato = {
-  id: 1946,
-  name: 'Soneium Minato',
+const ethereumSepolia = {
+  id: 11155111,
+  name: 'Ethereum Sepolia',
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
-    default: { http: ['https://rpc.minato.soneium.org'] },
+    default: { http: ['https://ethereum-sepolia-rpc.publicnode.com'] },
   },
   blockExplorers: {
-    default: { name: 'Soneium Minato Explorer', url: 'https://soneium-minato.blockscout.com' },
+    default: { name: 'Ethereum Sepolia Explorer', url: 'https://sepolia.etherscan.io/' },
   },
   testnet: true,
 } as const;
 
 export const config = createConfig({
-  chains: [soneiumMinato],
+  chains: [ethereumSepolia],
   connectors: [
     injected(),
   ],
   transports: {
-    [soneiumMinato.id]: http(),
+    [ethereumSepolia.id]: http(),
   },
 });
 

@@ -13,7 +13,6 @@ function App() {
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
 
-  // Hook del contrato inteligente
   const {
     tasks,
     completedCount,
@@ -28,11 +27,9 @@ function App() {
   useEffect(() => {
     async function initApp() {
       try {
-        // Get Farcaster context (user info, launch location)
         const context = sdk.context;
         setUserContext(context);
 
-        // Signal to host that App is ready (removes splash screen)
         await sdk.actions.ready();
       } catch (error) {
         console.log('Running in development mode (not in Farcaster Frame)');
@@ -43,7 +40,6 @@ function App() {
     initApp();
   }, []);
 
-  // Refrescar tareas cuando la transacción sea exitosa
   useEffect(() => {
     if (isSuccess) {
       refetchTasks();
@@ -54,7 +50,6 @@ function App() {
   }, [isSuccess, refetchTasks]);
 
   const handleConnect = () => {
-    // En desarrollo, usa el conector injected (MetaMask, etc.)
     const injectedConnector = connectors.find(c => c.id === 'injected');
 
     if (injectedConnector) {
@@ -102,7 +97,7 @@ function App() {
             </svg>
           </div>
           <h1>Task Tracker</h1>
-          <p className="subtitle">Manage your tasks on Soneium Minato</p>
+          <p className="subtitle">Manage your tasks on Ethereum Sepolia</p>
         </div>
 
         {userContext?.user && (
@@ -171,7 +166,6 @@ function App() {
               </div>
             </div>
 
-            {/* Create Task Form */}
             <form onSubmit={handleCreateTask} className="create-task-form">
               <input
                 type="text"
@@ -202,14 +196,12 @@ function App() {
               </button>
             </form>
 
-            {/* Success Message */}
             {showSuccess && (
               <div className="success-message">
                 ✓ Transaction confirmed! Task updated.
               </div>
             )}
 
-            {/* Tasks List */}
             <div className="tasks-section">
               <h2 className="section-title">Your Tasks</h2>
 
@@ -270,7 +262,7 @@ function App() {
         {!isConnected && (
           <div className="info-card">
             <p className="info-text">
-              Connect your wallet to start tracking tasks on Soneium Minato testnet.
+              Connect your wallet to start tracking tasks on Ethereum Sepolia.
             </p>
           </div>
         )}

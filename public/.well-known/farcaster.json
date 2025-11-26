@@ -19,6 +19,6 @@
         "tasks",
         "rewards"
       ],
-      "requiredChains": ["eip155:1946"]
+      "requiredChains": ["eip155:11155111"]
     }
 }
