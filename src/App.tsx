@@ -4,9 +4,23 @@ import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useTaskContract } from './hooks/useTaskContract';
 
 function App() {
+  const [isFarcasterReady, setIsFarcasterReady] = useState(false);
   const { ready } = usePrivy();
 
-  if (!ready) {
+  useEffect(() => {
+    async function notifyFarcaster() {
+      try {
+        await sdk.actions.ready();
+        setIsFarcasterReady(true);
+      } catch (error) {
+        console.log('Running in development mode (not in Farcaster Frame)');
+        setIsFarcasterReady(true);
+      }
+    }
+    notifyFarcaster();
+  }, []);
+
+  if (!ready || !isFarcasterReady) {
     return (
       <div className="loading-container">
         <div className="loader"></div>
@@ -19,7 +33,6 @@ function App() {
 }
 
 function AppContent() {
-  const [isReady, setIsReady] = useState(false);
   const [farcasterUser, setFarcasterUser] = useState<{
     username?: string;
     fid?: number;
@@ -45,24 +58,20 @@ function AppContent() {
   } = useTaskContract(address);
 
   useEffect(() => {
-    async function initApp() {
+    async function fetchFarcasterContext() {
       try {
         const context = await sdk.context;
-
         if (context?.user) {
           setFarcasterUser({
             username: context.user.username,
             fid: context.user.fid,
           });
         }
-
-        await sdk.actions.ready();
       } catch (error) {
-        console.log('Running in development mode (not in Farcaster Frame)');
+        console.log('Could not fetch Farcaster context');
       }
-      setIsReady(true);
     }
-    initApp();
+    fetchFarcasterContext();
   }, []);
 
   useEffect(() => {
@@ -100,15 +109,6 @@ function AppContent() {
   const handleCompleteTask = (taskId: number) => {
     completeTask(taskId);
   };
-
-  if (!isReady) {
-    return (
-      <div className="loading-container">
-        <div className="loader"></div>
-        <p>Loading Task Tracker...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="app-container">
