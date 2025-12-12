@@ -6,19 +6,18 @@
     },
     "miniapp": {
       "version": "1",
-      "name": "Startale Mini App",
+      "name": "Task Tracker",
       "iconUrl": "https://startale-miniapps.vercel.app/icon.png",
       "homeUrl": "https://startale-miniapps.vercel.app/",
       "splashImageUrl": "https://startale-miniapps.vercel.app/splash.png",
       "splashBackgroundColor": "#1a1a1a",
       "subtitle": "Startale Mini App Example",
-      "description": "Example code to learn how to create Mini Apps!",
+      "description": "Application to track your activities onchain!",
       "primaryCategory": "productivity",
       "tags": [
         "onchain",
         "tasks",
         "rewards"
-      ],
-      "requiredChains": ["eip155:11155111"]
+      ]
     }
 }

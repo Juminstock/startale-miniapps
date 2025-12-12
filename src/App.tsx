@@ -1,17 +1,37 @@
 import { useEffect, useState } from 'react';
 import { sdk } from '@farcaster/miniapp-sdk';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useTaskContract } from './hooks/useTaskContract';
 
 function App() {
+  const { ready } = usePrivy();
+
+  if (!ready) {
+    return (
+      <div className="loading-container">
+        <div className="loader"></div>
+        <p>Loading application...</p>
+      </div>
+    );
+  }
+
+  return <AppContent />;
+}
+
+function AppContent() {
   const [isReady, setIsReady] = useState(false);
-  const [userContext, setUserContext] = useState<any>(null);
+  const [farcasterUser, setFarcasterUser] = useState<{
+    username?: string;
+    fid?: number;
+  } | null>(null);
   const [newTaskDescription, setNewTaskDescription] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { authenticated, login, logout } = usePrivy();
+  const { wallets } = useWallets();
+
+  const address = wallets[0]?.address as `0x${string}` | undefined;
+  const isConnected = authenticated && wallets.length > 0;
 
   const {
     tasks,
@@ -27,8 +47,14 @@ function App() {
   useEffect(() => {
     async function initApp() {
       try {
-        const context = sdk.context;
-        setUserContext(context);
+        const context = await sdk.context;
+
+        if (context?.user) {
+          setFarcasterUser({
+            username: context.user.username,
+            fid: context.user.fid,
+          });
+        }
 
         await sdk.actions.ready();
       } catch (error) {
@@ -36,7 +62,6 @@ function App() {
       }
       setIsReady(true);
     }
-
     initApp();
   }, []);
 
@@ -49,13 +74,19 @@ function App() {
     }
   }, [isSuccess, refetchTasks]);
 
-  const handleConnect = () => {
-    const injectedConnector = connectors.find(c => c.id === 'injected');
+  const handleConnect = async () => {
+    try {
+      await login();
+    } catch (error) {
+      console.error('Failed to connect with Privy:', error);
+    }
+  };
 
-    if (injectedConnector) {
-      connect({ connector: injectedConnector });
-    } else {
-      console.error('No wallet connector found. Please install MetaMask or another Web3 wallet.');
+  const handleDisconnect = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Failed to disconnect:', error);
     }
   };
 
@@ -97,24 +128,19 @@ function App() {
             </svg>
           </div>
           <h1>Task Tracker</h1>
-          <p className="subtitle">Manage your tasks on Ethereum Sepolia</p>
+          <p className="subtitle">Manage your tasks on Soneium Minato</p>
         </div>
 
-        {userContext?.user && (
+        {farcasterUser && (
           <div className="user-info-card">
             <div className="user-header">
               <div className="avatar">
-                {userContext.user.username?.charAt(0).toUpperCase() || 'U'}
+                {farcasterUser.username?.charAt(0).toUpperCase() || 'U'}
               </div>
               <div className="user-details">
-                <p className="username">@{userContext.user.username}</p>
-                <p className="fid">FID: {userContext.user.fid}</p>
+                <p className="username">@{farcasterUser.username}</p>
+                <p className="fid">FID: {farcasterUser.fid}</p>
               </div>
-            </div>
-            <div className="launch-context">
-              <span className="context-badge">
-                {userContext.location?.type || 'direct'}
-              </span>
             </div>
           </div>
         )}
@@ -139,7 +165,7 @@ function App() {
                   </p>
                 </div>
               </div>
-              <button onClick={() => disconnect()} className="disconnect-button">
+              <button onClick={handleDisconnect} className="disconnect-button">
                 Disconnect
               </button>
             </div>
@@ -148,7 +174,6 @@ function App() {
 
         {isConnected && (
           <>
-            {/* Stats Card */}
             <div className="stats-card">
               <div className="stat-item">
                 <p className="stat-label">Total Tasks</p>
@@ -262,7 +287,7 @@ function App() {
         {!isConnected && (
           <div className="info-card">
             <p className="info-text">
-              Connect your wallet to start tracking tasks on Ethereum Sepolia.
+              Connect your wallet to start tracking tasks on Soneium Minato.
             </p>
           </div>
         )}
